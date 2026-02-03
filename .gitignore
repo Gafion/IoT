@@ -1,0 +1,32 @@
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === IDEs ===
+.idea/
+*.user
+*.suo
+.vscode/
+
+# === Arduino / PlatformIO ===
+arduino/.pio/
+arduino/.vscode/
+
+# === Python ===
+gateway/__pycache__/
+gateway/*.pyc
+gateway/venv/
+gateway/.env
+
+# === C# / .NET ===
+backend/**/bin/
+backend/**/obj/
+backend/**/*.user
+
+# === Node.js ===
+web/node_modules/
+
+# === Secrets ===
+*.env
+appsettings.Development.json
+appsettings.Production.json
