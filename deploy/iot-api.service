@@ -1,0 +1,15 @@
+[Unit]
+Description=IoT API (C#)
+After=network.target mariadb.service
+
+[Service]
+User=gruppe1
+WorkingDirectory=/home/gruppe1/iot-api-publish
+ExecStart=/home/gruppe1/.dotnot/dotnet /home/gruppe1/iot-api-publish/IoTApi.dll
+Restart=always
+RestartSec=5
+Environment="ASPNETCORE_URL=http://0.0.0.0:5000"
+Environment="ASPNETCORE_ENVIRONMENT=Production"
+
+[Install]
+WantedBy=multi-user.target

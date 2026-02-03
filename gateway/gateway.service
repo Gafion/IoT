@@ -1,0 +1,16 @@
+[Unit]
+Description=IoT Gateway
+After=network.target
+
+[Service]
+User=colberg
+WorkingDirectory=/home/colberg/IoT/gateway
+ExecStart=/home/colberg/IoT/gateway/venv/bin/python gateway.py
+Restart=always
+RestartSec=5
+Environment="IOT_API_URL=http//19.101.30.141:5000/api/readings"
+Environment="IOT_API_TOKEN=TOKENHERE"
+Environment="IOT_DEVICE_ID=uno-r4-01"
+
+[Install]
+WantedBy=multi-user.target
