@@ -13,7 +13,9 @@ fi
 
 cd  ~/IoT/gateway
 python3 -m venv venv
-./venv/bin/pip install -r requirements.txt
+./venv/bin/python -m ensurepip --upgrade
+./venv/bin/python -m pip install --upgrade pip
+./venv/bin/python -m pip install -r requirements.txt
 
 sudo cp gateway.service /etc/systemd/system/iot-gateway.service
 sudo systemctl daemon-reload
