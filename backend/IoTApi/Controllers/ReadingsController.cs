@@ -41,7 +41,7 @@ public class ReadingsController : ControllerBase {
     }
 
     // GET /api/readings/latest
-    [HttpGet("api/readings/latest")]
+    [HttpGet("readings/latest")]
     public async Task<IActionResult> GetLatest() {
         var latest = await _db.Readings
             .OrderByDescending(r => r.Timestamp)
@@ -55,7 +55,7 @@ public class ReadingsController : ControllerBase {
     }
 
     // GET /api/readings/status
-    [HttpGet("api/status")]
+    [HttpGet("status")]
     public async Task<IActionResult> GetStatus() {
         var latest = await _db.Readings
             .OrderByDescending(r => r.Timestamp)
