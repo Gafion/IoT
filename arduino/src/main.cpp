@@ -4,9 +4,6 @@
 constexpr int trigPin = 9;
 constexpr int echoPin = 10;
 
-// Valid range: up to 40 cm
-constexpr double MAX_DISTANCE = 40.0;
-
 // Noise reduction
 constexpr int FILTER_SIZE = 5;
 double readings[FILTER_SIZE];
@@ -24,19 +21,11 @@ double readDistance() {
     digitalWrite(trigPin, LOW);
 
     unsigned long duration = pulseIn(echoPin, HIGH, 30000);
-    if (duration == 0) {
-        return -1.0;
-    }
     return (duration * 0.0343) / 2.0;
 }
 
 double getFilteredDistance() {
     double raw = readDistance();
-
-    // Validation
-    if (raw < 0.0 || raw > MAX_DISTANCE) {
-        return -1.0;
-    }
 
     // Add to buffer
     readings[readingIndex] = raw;
@@ -70,19 +59,12 @@ void setup() {
 void loop() {
     double distance = getFilteredDistance();
 
-    bool valid = distance >= 0.0;
-    bool ledOn = valid && (distance < 20.0);
+    bool ledOn = (distance < 20.0);
 
     digitalWrite(LED_PIN, ledOn ? HIGH : LOW);
 
     if (ledOn != prevLedOn || firstRead) {
-        Serial.print("{\"distance\": ");
-        if (valid) {
-            Serial.print(distance, 2);
-        } else {
-            Serial.print("null");
-        }
-        Serial.print(", \"led_on\": ");
+        Serial.print("{\"led_on\": ");
         Serial.print(ledOn ? "true" : "false");
         Serial.println("}");
 
