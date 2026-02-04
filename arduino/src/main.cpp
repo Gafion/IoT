@@ -80,7 +80,7 @@ void loop() {
         if (valid) {
             Serial.print(distance, 2);
         } else {
-            Serial.print("Null");
+            Serial.print("null");
         }
         Serial.print(", \"led_on\": ");
         Serial.print(ledOn ? "true" : "false");
