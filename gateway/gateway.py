@@ -66,21 +66,16 @@ def main():
 
             try:
                 msg = json.loads(line)
-                distance_cm = float(msg["distance"])
                 led_on = parse_bool(msg["led_on"])
-
-                if not (0.0 <= distance_cm <= 1000.0):
-                    raise ValueError(f"Invalid distance: {distance_cm}")
 
                 payload = {
                     "deviceId": DEVICE_ID,
                     "timestamp": iso_utc_now(),
-                    "distanceCm": distance_cm,
                     "ledOn": led_on,
                 }
 
                 status, _resp_body = post_reading(payload)
-                print(f"POST {status}: distanceCm={distance_cm:.2f}, ledOn={led_on}")
+                print(f"POST {status}: ledOn={led_on}")
 
                 backoff = 1.0
 
