@@ -15,7 +15,6 @@ public class AppDbContext : DbContext {
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.DeviceId).HasColumnName("device_id");
             entity.Property(e => e.Timestamp).HasColumnName("timestamp");
-            entity.Property(e => e.DistanceCm).HasColumnName("distance_cm");
             entity.Property(e => e.LedOn).HasColumnName("led_on");
 
             entity.HasIndex(e => new { e.DeviceId, e.Timestamp });

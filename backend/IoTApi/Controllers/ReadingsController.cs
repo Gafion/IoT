@@ -30,7 +30,6 @@ public class ReadingsController : ControllerBase {
         var reading = new Reading {
             DeviceId = dto.DeviceId,
             Timestamp = dto.Timestamp.ToUniversalTime(),
-            DistanceCm = dto.DistanceCm,
             LedOn = dto.LedOn
         };
 

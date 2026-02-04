@@ -10,8 +10,5 @@ public class ReadingDto {
     [Required]
     public DateTime Timestamp { get; set; }
     
-    [Range(0, 1000)]
-    public double DistanceCm { get; set; }
-    
     public bool LedOn { get; set; }
 }
