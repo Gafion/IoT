@@ -8,7 +8,7 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                       ?? "Server=127.0.0.1;Database=colbergtech;User=iot_api;Password=<DB_PASSWORD>;";
+                       ?? "Server=127.0.0.1;Database=colbergtech;User=iot_api;Password=1234;";
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));

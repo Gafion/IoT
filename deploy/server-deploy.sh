@@ -10,8 +10,8 @@ cd backend/IoTApi
 ~/.dotnet/dotnet publish -c Release -o ~/iot-api-publish
 sudo systemctl restart iot-api
 
-cd ~/IoT/web
-npm install
-sudo systemctl restart iot-web
+# cd ~/IoT/web
+# npm install
+# sudo systemctl restart iot-web
 
 echo "=== Deploy complete ==="
