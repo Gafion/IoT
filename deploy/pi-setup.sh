@@ -18,5 +18,6 @@ python3 -m venv venv
 sudo cp gateway.service /etc/systemd/system/iot-gateway.service
 sudo systemctl daemon-reload
 sudo systemctl enable iot-gateway
+sudo systemctl restart iot-gateway.service
 
 echo "=== Setup complete ==="

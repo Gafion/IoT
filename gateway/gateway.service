@@ -8,6 +8,9 @@ WorkingDirectory=/home/colberg/IoT/gateway
 ExecStart=/home/colberg/IoT/gateway/venv/bin/python gateway.py
 Restart=always
 RestartSec=5
+
+Environment="IOT_SERIAL_PORT=/dev/ttyACM0"
+Environment="IOT_BAUDRATE=9600"
 Environment="IOT_API_URL=http://10.101.30.141:5000/api/readings"
 Environment="IOT_API_TOKEN=htxK2Vck07IRpJmgm1WsE2tSRBRtjZ3IMW+yEinHrGg="
 Environment="IOT_DEVICE_ID=uno-r4-01"
