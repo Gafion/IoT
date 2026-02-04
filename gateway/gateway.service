@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=colberg
 WorkingDirectory=/home/colberg/IoT/gateway
-ExecStart=/home/colberg/IoT/gateway/venv/bin/python gateway.py
+ExecStart=/home/colberg/IoT/gateway/venv/bin/python -u gateway.py
 Restart=always
 RestartSec=5
 
