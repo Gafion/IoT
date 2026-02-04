@@ -1,0 +1,81 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using IoTApi.Data;
+using IoTApi.Models;
+
+namespace IoTApi.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class ReadingsController : ControllerBase {
+    private readonly AppDbContext _db;
+    private readonly IConfiguration _config;
+    
+    public ReadingsController(AppDbContext db, IConfiguration config) {
+        _db = db;
+        _config = config;
+    }
+    
+    // POST /api/readings
+    [HttpPost]
+    public async Task<IActionResult> PostReading([FromBody] ReadingDto dto) {
+        var expectedToken = _config["ApiToken"];
+        if (!string.IsNullOrEmpty(expectedToken)) {
+            var authHeader = Request.Headers.Authorization.ToString();
+            if (authHeader != $"Bearer {expectedToken}") {
+                return Unauthorized();
+            }
+        }
+        
+        var reading = new Reading {
+            DeviceId = dto.DeviceId,
+            Timestamp = dto.Timestamp.ToUniversalTime(),
+            DistanceCm = dto.DistanceCm,
+            LedOn = dto.LedOn
+        };
+
+        _db.Readings.Add(reading);
+        await _db.SaveChangesAsync();
+
+        return Ok(new { ok = true, id = reading.Id });
+    }
+
+    // GET /api/readings/latest
+    [HttpGet("api/readings/latest")]
+    public async Task<IActionResult> GetLatest() {
+        var latest = await _db.Readings
+            .OrderByDescending(r => r.Timestamp)
+            .FirstOrDefaultAsync();
+
+        if (latest == null) {
+            return NotFound(new { error = "No readings yet"});
+        }
+
+        return Ok(latest);
+    }
+
+    // GET /api/readings/status
+    [HttpGet("api/status")]
+    public async Task<IActionResult> GetStatus() {
+        var latest = await _db.Readings
+            .OrderByDescending(r => r.Timestamp)
+            .FirstOrDefaultAsync();
+
+        if (latest == null) {
+            return Ok(new {
+                status = "UNKNOWN",
+                message = "No readings received yet"
+            });
+        }
+
+        var age = DateTime.UtcNow - latest.Timestamp;
+        var isStale = age.TotalMinutes > 5;
+
+        return Ok(new {
+            status = latest.LedOn ? "ALARM" : "OK",
+            lastReading = latest,
+            lastUpdatedSecondsAgo = (int)age.TotalSeconds,
+            isStale
+        });
+    }
+}
