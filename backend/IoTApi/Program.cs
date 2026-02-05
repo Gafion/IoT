@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using IoTApi.Data;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,27 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/login";
+    options.Events.OnRedirectToLogin = context =>
+    {
+        if (context.Request.Path.StartsWithSegments("/api"))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        }
+        else
+        {
+            context.Response.Redirect(context.RedirectUri);
+        }
+        return Task.CompletedTask;
+    };
+});
 
 // CORS
 builder.Services.AddCors(options =>
@@ -38,6 +60,31 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors();
+app.UseStaticFiles();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapGet("/", () => Results.Redirect("/dashboard"));
+
+app.MapGet("/dashboard", (IWebHostEnvironment env) => {
+    var webRoot = env.WebRootPath ?? "wwwroot";
+    var path = Path.Combine(webRoot, "html", "Dashboard.html");
+    return Results.File(path, contentType: "text/html; charset=utf-8");
+}).RequireAuthorization();
+
+app.MapGet("/login", (IWebHostEnvironment env) => {
+    var webRoot = env.WebRootPath ?? "wwwroot";
+    var path = Path.Combine(webRoot, "html", "Login.html");
+    return Results.File(path, contentType: "text/html; charset=utf-8");
+});
+
+app.MapGet("/register", (IWebHostEnvironment env) => {
+    var webRoot = env.WebRootPath ?? "wwwroot";
+    var path = Path.Combine(webRoot, "html", "Register.html");
+    return Results.File(path, contentType: "text/html; charset=utf-8");
+});
+
 app.MapControllers();
 
 app.Run();

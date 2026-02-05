@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IoT Dashboard</title>
+    <link rel="stylesheet" href="../css/Dashboard.css" />
+</head>
+<body>
+    <header class="navbar">
+        <div class="container navbar-content">
+            <span class="brand">IoT Dashboard</span>
+            <button id="logoutBtn" class="btn-logout">Logout</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Device Status</h2>
+                <div class="meta">
+                    <span id="lastRefresh">Last refresh: -</span>
+                    <span id="error" class="error"></span>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Device</th>
+                            <th>State</th>
+                            <th>Timestamp (UTC)</th>
+                            <th>Age</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deviceRows"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/Dashboard.js"></script>
+</body>
+</html>

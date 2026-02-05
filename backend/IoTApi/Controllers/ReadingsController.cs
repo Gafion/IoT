@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IoTApi.Data;
@@ -5,6 +6,7 @@ using IoTApi.Models;
 
 namespace IoTApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ReadingsController : ControllerBase {
@@ -17,6 +19,7 @@ public class ReadingsController : ControllerBase {
     }
     
     // POST /api/readings
+    [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> PostReading([FromBody] ReadingDto dto) {
         var expectedToken = _config["ApiToken"];
@@ -76,5 +79,34 @@ public class ReadingsController : ControllerBase {
             lastUpdatedSecondsAgo = (int)age.TotalSeconds,
             isStale
         });
+    }
+
+    // GET /api/readings/status-per-device
+    [HttpGet("status-per-device")]
+    public async Task<IActionResult> GetStatusPerDevice() {
+        var latestTimestamps = await _db.Readings
+            .AsNoTracking()
+            .GroupBy(r => r.DeviceId)
+            .Select(g => new { DeviceId = g.Key, LatestTimestamp = g.Max(x => x.Timestamp) })
+            .ToListAsync();
+
+        var latestRows = await _db.Readings
+            .AsNoTracking()
+            .Join(
+                latestTimestamps,
+                r => new { r.DeviceId, r.Timestamp },
+                x => new { DeviceId = x.DeviceId, Timestamp = x.LatestTimestamp },
+                (r, _) => r
+            )
+            .OrderBy(r => r.DeviceId)
+            .ToListAsync();
+
+        var result = latestRows.Select(r => new DeviceStatusDto {
+            DeviceId = r.DeviceId,
+            LedOn = r.LedOn,
+            TimestampUtc = DateTime.SpecifyKind(r.Timestamp, DateTimeKind.Utc)
+        });
+
+        return Ok(result);
     }
 }

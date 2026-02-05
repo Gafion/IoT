@@ -1,14 +1,16 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using IoTApi.Models;
 
 namespace IoTApi.Data;
 
-public class AppDbContext : DbContext {
+public class AppDbContext : IdentityDbContext {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     
     public DbSet<Reading> Readings => Set<Reading>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Reading>(entity => {
             entity.ToTable("readings");
             entity.HasKey(e => e.Id);
