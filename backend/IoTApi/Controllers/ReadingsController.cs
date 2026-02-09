@@ -84,29 +84,21 @@ public class ReadingsController : ControllerBase {
     // GET /api/readings/status-per-device
     [HttpGet("status-per-device")]
     public async Task<IActionResult> GetStatusPerDevice() {
-        var latestTimestamps = await _db.Readings
-            .AsNoTracking()
-            .GroupBy(r => r.DeviceId)
-            .Select(g => new { DeviceId = g.Key, LatestTimestamp = g.Max(x => x.Timestamp) })
-            .ToListAsync();
+        var result = await _db.Readings
+                    .AsNoTracking()
+                    .GroupBy(r => r.DeviceId)
+                    .Select(g => g
+                        .OrderByDescending(r => r.Timestamp)
+                        .Select(r => new DeviceStatusDto {
+                            DeviceId = r.DeviceId,
+                            LedOn = r.LedOn,
+                            TimestampUtc = DateTime.SpecifyKind(r.Timestamp, DateTimeKind.Utc)
+                        })
+                        .First()
+                    )
+                    .OrderBy(x => x.DeviceId)
+                    .ToListAsync();
 
-        var latestRows = await _db.Readings
-            .AsNoTracking()
-            .Join(
-                latestTimestamps,
-                r => new { r.DeviceId, r.Timestamp },
-                x => new { DeviceId = x.DeviceId, Timestamp = x.LatestTimestamp },
-                (r, _) => r
-            )
-            .OrderBy(r => r.DeviceId)
-            .ToListAsync();
-
-        var result = latestRows.Select(r => new DeviceStatusDto {
-            DeviceId = r.DeviceId,
-            LedOn = r.LedOn,
-            TimestampUtc = DateTime.SpecifyKind(r.Timestamp, DateTimeKind.Utc)
-        });
-
-        return Ok(result);
+                return Ok(result);
     }
 }

@@ -4,7 +4,11 @@ set -e
 echo "=== Server: Deploying ==="
 
 cd ~/IoT
-git pull origin main
+git fetch origin
+git reset --hard origin/main
+git clean -fd
+git pull --ff-only origin main
+
 
 cd backend/IoTApi
 ~/.dotnet/dotnet publish -c Release -o ~/iot-api-publish
