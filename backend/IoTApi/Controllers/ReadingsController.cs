@@ -84,21 +84,29 @@ public class ReadingsController : ControllerBase {
     // GET /api/readings/status-per-device
     [HttpGet("status-per-device")]
     public async Task<IActionResult> GetStatusPerDevice() {
-        var result = await _db.Readings
-                    .AsNoTracking()
-                    .GroupBy(r => r.DeviceId)
-                    .Select(g => g
-                        .OrderByDescending(r => r.Timestamp)
-                        .Select(r => new DeviceStatusDto {
-                            DeviceId = r.DeviceId,
-                            LedOn = r.LedOn,
-                            TimestampUtc = DateTime.SpecifyKind(r.Timestamp, DateTimeKind.Utc)
-                        })
-                        .First()
-                    )
-                    .OrderBy(x => x.DeviceId)
-                    .ToListAsync();
+        var latestPerDevice = _db.Readings
+            .AsNoTracking()
+            .GroupBy(r => r.DeviceId)
+            .Select(g => new {
+                DeviceId = g.Key,
+                LatestTimestamp = g.Max(x => x.Timestamp)
+            });
 
-                return Ok(result);
+        var result = await _db.Readings
+            .AsNoTracking()
+            .Join(
+                latestPerDevice,
+                r => new { r.DeviceId, r.Timestamp },
+                x => new { x.DeviceId, Timestamp = x.LatestTimestamp },
+                (r, _) => new DeviceStatusDto {
+                    DeviceId = r.DeviceId,
+                    LedOn = r.LedOn,
+                    TimestampUtc = DateTime.SpecifyKind(r.Timestamp, DateTimeKind.Utc)
+                }
+            )
+            .OrderBy(x => x.DeviceId)
+            .ToListAsync();
+
+        return Ok(result);
     }
 }
