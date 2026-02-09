@@ -37,6 +37,23 @@ function fmtAge(seconds) {
     return `${m}m ${s}s`;
 }
 
+function fmtTimestampUtc(ts) {
+    const t = ts ? Date.parse(ts) : NaN;
+    if (!Number.isFinite(t)) return "-";
+
+    const d = new Date(t);
+
+    const hh = String(d.getUTCHours()).padStart(2, "0");
+    const mm = String(d.getUTCMinutes()).padStart(2, "0");
+    const ss = String(d.getUTCSeconds()).padStart(2, "0");
+
+    const dd = String(d.getUTCDate()).padStart(2, "0");
+    const mon = String(d.getUTCMonth() + 1).padStart(2, "0");
+    const yyyy = d.getUTCFullYear();
+
+    return `${hh}:${mm}:${ss} ${dd}/${mon}/${yyyy}`;
+}
+
 function render(devices) {
     const now = Date.now();
 
@@ -53,7 +70,7 @@ function render(devices) {
             <tr>
                 <td>${escapeHtml(d.deviceId)}</td>
                 <td><span class="badge ${badgeClass}">${stateText}</span></td>
-                <td>${escapeHtml(ts ?? ".")}</td>
+                <td>${escapeHtml(fmtTimestampUtc(ts))}</td>
                 <td>${fmtAge(ageSeconds)}</td>
             </tr>
         `;
