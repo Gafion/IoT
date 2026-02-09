@@ -1,6 +1,13 @@
 const loginForm = document.getElementById('loginForm');
 const errorMessage = document.getElementById('errorMessage');
 
+function getApiBase() {
+    const el = document.getElementById('meta[name="api-base"]');
+    if (!el || !el.content) {
+        throw new Error('Missing <meta name="api-base">');
+    }
+    return new URL(el.content);
+}
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorMessage.style.display = 'none';
@@ -11,11 +18,15 @@ loginForm.addEventListener('submit', async (e) => {
     const rememberMe = document.getElementById('rememberMe').checked;
 
     try {
-        const response = await fetch('/api/auth/login', {
+        const apiBase = getApiBase();
+        const url = new URL('/api/auth/login', apiBase);
+
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({ email, password, rememberMe })
         });
 

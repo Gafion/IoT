@@ -10,6 +10,7 @@ Restart=always
 RestartSec=5
 Environment="ASPNETCORE_URLS=http://0.0.0.0:5000"
 Environment="ASPNETCORE_ENVIRONMENT=Production"
+Environment="SiteOrigin=https://site.example.com"
 
 [Install]
 WantedBy=multi-user.target

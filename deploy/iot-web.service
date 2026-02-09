@@ -5,11 +5,9 @@ After=network.target
 [Service]
 User=gruppe1
 WorkingDirectory=/home/gruppe1/IoT/web
-ExecStart=/usr/bin/node server.js
+ExecStart=/usr/bin/python3 -m http.server 3000 --bind 0.0.0.0
 Restart=always
 RestartSec=5
-Environment="PORT=3000"
-Environment="API_URL=http://127.0.0.1:5000"
 
 [Install]
 WantedBy=multi-user.target

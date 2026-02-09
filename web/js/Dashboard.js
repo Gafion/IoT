@@ -3,9 +3,22 @@ const errorElement = document.getElementById('error');
 const lastRefreshElement = document.getElementById('lastRefresh');
 const logoutBtn = document.getElementById('logoutBtn');
 
+function getApiBase() {
+    const el = document.querySelector('meta[name="api-base"]');
+    if (!el || !el.content) throw new Error('Missing <meta name="api-base">');
+    return new URL(el.content);
+}
+
 logoutBtn.addEventListener('click', async () => {
     try {
-        const res = await fetch('/api/auth/logout', { method: 'POST' });
+        const apiBase = getApiBase();
+        const url = new URL('/api/auth/logout', apiBase);
+
+        const res = await fetch(url,{
+            method: 'POST',
+            credentials: 'include'
+        });
+
         if (res.ok) {
             window.location.href = '/login';
         }
@@ -63,7 +76,15 @@ function render(devices) {
 async function refresh() {
     try {
         errorElement.textContent = "";
-        const res = await fetch("/api/readings/status-per-device", { cache: "no-store" });
+
+        const apiBase = getApiBase();
+        const url = new URL('/api/readings/status-per-device', apiBase);
+
+        const res = await fetch(url, {
+            cache: "no-store",
+            credentials: 'include'
+        });
+
         if (res.status === 401) {
             window.location.href = '/login';
             return;

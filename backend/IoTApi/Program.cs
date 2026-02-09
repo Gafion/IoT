@@ -21,6 +21,10 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/login";
+
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
     options.Events.OnRedirectToLogin = context =>
     {
         if (context.Request.Path.StartsWithSegments("/api"))
@@ -37,10 +41,17 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // CORS
 builder.Services.AddCors(options =>
-    {options.AddDefaultPolicy(policy => {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+{
+    options.AddPolicy("SiteCors", policy =>
+    {
+        var siteOrigin = builder.Configuration["SiteOrigin"]; // e.g. https://site.example.com
+        if (!string.IsNullOrWhiteSpace(siteOrigin))
+        {
+            policy.WithOrigins(siteOrigin)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        }
     });
 });
 
@@ -59,13 +70,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors();
-app.UseStaticFiles();
+app.UseCors("SiteCors");
+// app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/", () => Results.Redirect("/dashboard"));
+/* app.MapGet("/", () => Results.Redirect("/dashboard"));
 
 app.MapGet("/dashboard", (IWebHostEnvironment env) => {
     var webRoot = env.WebRootPath ?? "wwwroot";
@@ -83,7 +94,7 @@ app.MapGet("/register", (IWebHostEnvironment env) => {
     var webRoot = env.WebRootPath ?? "wwwroot";
     var path = Path.Combine(webRoot, "html", "Register.html");
     return Results.File(path, contentType: "text/html; charset=utf-8");
-});
+}); */
 
 app.MapControllers();
 
