@@ -18,6 +18,19 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.Configure<IdentityOptions>(options =>
+    {
+        options.Password.RequiredLength = 1;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequiredUniqueChars = 0;
+    });
+}
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/login";
