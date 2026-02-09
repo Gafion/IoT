@@ -84,7 +84,7 @@ body {
 .form-control:focus {
     outline: none;
     border-color: var(--primary-color);
-    ring: 2px solid var(--primary-color);
+    box-shadow: 2px solid var(--primary-color);
 }
 
 .btn {
