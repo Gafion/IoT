@@ -92,7 +92,7 @@ async function refresh() {
         const devices = await res.json();
         render(devices);
 
-        lastRefreshElement.textContent = `Last refresh: ${new Date().toISOString()}`;
+        lastRefreshElement.textContent = `Last refresh: ${fmtTimestamp(new Date().toISOString())}`;
     } catch (e) {
         errorElement.textContent = `Failed to load: ${e.message}`;
     }
