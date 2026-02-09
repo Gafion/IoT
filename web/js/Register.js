@@ -1,12 +1,6 @@
 const registerForm = document.getElementById('registerForm');
 const errorMessage = document.getElementById('errorMessage');
 
-function getApiBase() {
-    const el = document.querySelector('meta[name="api-base"]');
-    if (!el || !el.content) throw new Error('Missing <meta name="api-base">');
-    return new URL(el.content);
-}
-
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorMessage.style.display = 'none';
@@ -23,15 +17,11 @@ registerForm.addEventListener('submit', async (e) => {
     }
 
     try {
-        const apiBase = getApiBase();
-        const url = new URL('/api/auth/register', apiBase);
-
-        const response = await fetch(url, {
+        const response = await fetch('/api/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            credentials: 'include',
             body: JSON.stringify({ email, password })
         });
 
