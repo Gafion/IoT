@@ -1,4 +1,6 @@
+document.addEventListener('DOMContentLoaded', () => {
 const gridElement = document.getElementById('deviceGrid');
+const rowsElement = document.getElementById('deviceRows');
 const errorElement = document.getElementById('error');
 const lastRefreshElement = document.getElementById('lastRefresh');
 const logoutBtn = document.getElementById('logoutBtn');
@@ -9,16 +11,18 @@ const MOCK_DEVICES = [
     { deviceId: "Bedroom Heater", ledOn: true, timestampUtc: new Date(Date.now() - 1035000).toISOString() }
 ];
 
-logoutBtn.addEventListener('click', async () => {
-    try {
-        const res = await fetch('/api/auth/logout', { method: 'POST' });
-        if (res.ok) {
-            window.location.href = '/login';
-        }
-    } catch (e) {
-        console.error('Logout failed', e);
-    }
-});
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', async () => {
+      try {
+          const res = await fetch('/api/auth/logout', { method: 'POST' });
+          if (res.ok) {
+              window.location.href = '/login';
+          }
+      } catch (e) {
+          console.error('Logout failed', e);
+      }
+  });
+}
 
 function escapeHtml(s) {
     return String(s)
@@ -60,9 +64,9 @@ function fmtTimestamp(ts) {
     return `${hh}:${mm}:${ss} ${dd}/${mon}/${yyyy}`;
 }
 
-function render(devices) {
+function renderCards(devices) {
     const now = Date.now();
-
+    if (!gridElement) return;
     gridElement.innerHTML = devices.map(d => {
         const ts = d.timestampUtc ?? d.timestampUTC ?? d.timestamp ?? null;
         const t = ts ? Date.parse(ts) : NaN;
@@ -90,9 +94,38 @@ function render(devices) {
     }).join("");
 }
 
+function renderTable(devices) {
+    const now = Date.now();
+    if (!rowsElement) return;
+    rowsElement.innerHTML = devices.map(d => {
+        const ts = d.timestampUtc ?? d.timestampUTC ?? d.timestamp ?? null;
+        const t = ts ? Date.parse(ts) : NaN;
+        const ageSeconds = Number.isFinite(t) ? Math.floor((now - t) / 1000) : NaN;
+
+        const isOn = !!d.ledOn;
+        const stateText = isOn ? "ON" : "OFF";
+        const badgeClass = isOn ? "on" : "off";
+
+        return `
+            <tr>
+                <td>${escapeHtml(d.deviceId)}</td>
+                <td><span class="badge ${badgeClass}">${stateText}</span></td>
+                <td>${escapeHtml(fmtTimestamp(ts))}</td>
+                <td>${fmtAge(ageSeconds)}</td>
+            </tr>
+        `;
+    }).join("");
+}
+
+function render(devices) {
+    if (gridElement) return renderCards(devices);
+    if (rowsElement) return renderTable(devices);
+    if (errorElement) errorElement.textContent = "UI not found: neither #deviceGrid nor #deviceRows exists.";
+}
+
 async function refresh() {
     try {
-        errorElement.textContent = "";
+        if (errorElement) errorElement.textContent = "";
         const res = await fetch("/api/readings/status-per-device", { cache: "no-store" });
         if (res.status === 401) {
             window.location.href = '/login';
@@ -104,21 +137,22 @@ async function refresh() {
 
         const devices = await res.json();
         
-        if (devices.length === 0) {
+        if (!devices || devices.length === 0) {
             render(MOCK_DEVICES);
-            errorElement.textContent = "No live data available. Showing placeholders.";
+            if (errorElement) errorElement.textContent = "No live data available. Showing placeholders.";
         } else {
             render(devices);
         }
 
-        lastRefreshElement.textContent = `Last refresh: ${fmtTimestamp(new Date().toISOString())}`;
+        if (lastRefreshElement) lastRefreshElement.textContent = `Last refresh: ${fmtTimestamp(new Date().toISOString())}`;
     } catch (e) {
         console.warn('API fetch failed, using mock data', e);
-        errorElement.textContent = `Offline: ${e.message}. Showing placeholders.`;
+        if (errorElement) errorElement.textContent = `Offline: ${e.message}. Showing placeholders.`;
         render(MOCK_DEVICES);
-        lastRefreshElement.textContent = `Last refresh: ${fmtTimestamp(new Date().toISOString())} (Mock)`;
+        if (lastRefreshElement) lastRefreshElement.textContent = `Last refresh: ${fmtTimestamp(new Date().toISOString())} (Mock)`;
     }
 }
 
 refresh();
 setInterval(refresh, 2000);
+});
