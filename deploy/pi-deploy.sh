@@ -32,3 +32,4 @@ sudo systemctl daemon-reload
 sudo systemctl restart iot-gateway.service
 
 echo "=== Deploy complete ==="
+sudo journalctl -u iot-gateway -f
