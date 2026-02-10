@@ -109,4 +109,17 @@ public class ReadingsController : ControllerBase {
 
         return Ok(result);
     }
+
+    // GET /api/readings/history/{deviceId}
+    [HttpGet("history/{deviceId}")]
+    public async Task<IActionResult> GetHistory(string deviceId, [FromQuery] int limit = 100) {
+        var history = await _db.Readings
+            .AsNoTracking()
+            .Where(r => r.DeviceId == deviceId)
+            .OrderByDescending(r => r.Timestamp)
+            .Take(limit)
+            .ToListAsync();
+
+        return Ok(history);
+    }
 }

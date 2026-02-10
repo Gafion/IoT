@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Device History - IoT Dashboard</title>
+    <link rel="stylesheet" href="../css/Variables.css" />
+    <link rel="stylesheet" href="../css/DarkmodeBtn.css" />
+    <link rel="stylesheet" href="../css/Dashboard.css" />
+    <link rel="stylesheet" href="../css/History.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header class="navbar">
+        <div class="container navbar-content">
+            <div class="nav-left">
+                <a href="/dashboard" class="btn-back">← Back</a>
+                <span class="brand" id="deviceName">Device History</span>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" type="button" aria-label="Toggle theme"></button>
+                <button id="logoutBtn" class="btn-logout">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Chart Section -->
+        <div class="card chart-card">
+            <div class="card-header">
+                <h2>Activity Trend</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="historyChart"></canvas>
+            </div>
+        </div>
+
+        <!-- History List Section -->
+        <div class="card history-card">
+            <div class="card-header">
+                <h2>Action Log</h2>
+                <div class="meta">
+                    <span id="historyStatus">Loading...</span>
+                </div>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group search">
+                    <input type="text" id="searchInput" placeholder="Search actions..." />
+                </div>
+                <div class="filter-group">
+                    <label for="dateFilter">Date:</label>
+                    <input type="date" id="dateFilter" />
+                </div>
+                <div class="filter-group">
+                    <label for="timeFilter">Time:</label>
+                    <input type="time" id="timeFilter" step="1" />
+                </div>
+                <div class="filter-group">
+                    <label for="stateFilter">State:</label>
+                    <select id="stateFilter">
+                        <option value="all">All States</option>
+                        <option value="on">ON</option>
+                        <option value="off">OFF</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Date</th>
+                            <th>State</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyRows">
+                        <!-- Entries will be populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/Theme.js"></script>
+    <script src="../js/History.js"></script>
+</body>
+</html>

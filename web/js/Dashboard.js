@@ -77,7 +77,7 @@ function renderCards(devices) {
         const badgeClass = isOn ? "on" : "off";
 
         return `
-            <div class="device-card">
+            <div class="device-card" onclick="window.location.href='/history?deviceId=${encodeURIComponent(d.deviceId)}'">
                 <div class="device-image">
                     <div class="placeholder-img"></div>
                 </div>
@@ -107,7 +107,7 @@ function renderTable(devices) {
         const badgeClass = isOn ? "on" : "off";
 
         return `
-            <tr>
+            <tr onclick="window.location.href='/history?deviceId=${encodeURIComponent(d.deviceId)}'" style="cursor: pointer;">
                 <td>${escapeHtml(d.deviceId)}</td>
                 <td><span class="badge ${badgeClass}">${stateText}</span></td>
                 <td>${escapeHtml(fmtTimestamp(ts))}</td>

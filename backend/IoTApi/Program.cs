@@ -91,6 +91,12 @@ app.MapGet("/register", (IWebHostEnvironment env) => {
     return Results.File(path, contentType: "text/html; charset=utf-8");
 });
 
+app.MapGet("/history", (IWebHostEnvironment env) => {
+    var webRoot = env.WebRootPath ?? "wwwroot";
+    var path = Path.Combine(webRoot, "html", "History.html");
+    return Results.File(path, contentType: "text/html; charset=utf-8");
+}).RequireAuthorization();
+
 app.MapControllers();
 
 app.Run();
