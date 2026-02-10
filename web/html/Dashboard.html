@@ -10,7 +10,10 @@
     <header class="navbar">
         <div class="container navbar-content">
             <span class="brand">IoT Dashboard</span>
-            <button id="logoutBtn" class="btn-logout">Logout</button>
+            <div class="nav-actions">
+                <button class="theme-toggle" type="button" aria-label="Toggle theme"></button>
+                <button id="logoutBtn" class="btn-logout">Logout</button>
+            </div>
         </div>
     </header>
 
@@ -40,6 +43,7 @@
         </div>
     </main>
 
+    <script src="../js/Theme.js"></script>
     <script src="../js/Dashboard.js"></script>
 </body>
 </html>

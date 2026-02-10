@@ -125,3 +125,59 @@ body {
     font-size: 0.875rem;
     display: none;
 }
+
+/* Theme toggle button */
+.theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 1000;
+}
+
+.theme-toggle:hover {
+    background-color: var(--bg-color);
+    border-color: var(--text-muted);
+}
+
+.theme-toggle .theme-icon {
+    transition: filter 0.3s ease;
+}
+
+[data-theme="dark"] .theme-toggle .theme-icon {
+    filter: grayscale(1) brightness(0.7);
+    opacity: 0.8;
+}
+
+/* Explicit theme overrides (override system preference if user toggles) */
+:root[data-theme="light"] {
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --error-bg: #fee2e2;
+    --error-text: #991b1b;
+}
+
+:root[data-theme="dark"] {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --error-bg: #7f1d1d;
+    --error-text: #fca5a5;
+}
