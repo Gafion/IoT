@@ -17,6 +17,8 @@ gateway/__pycache__/
 gateway/*.pyc
 gateway/venv/
 gateway/.env
+gateway/*.db
+*.db
 
 # === C# / .NET ===
 backend/**/bin/
