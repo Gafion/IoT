@@ -1,7 +1,13 @@
-const rowsElement = document.getElementById('deviceRows');
+const gridElement = document.getElementById('deviceGrid');
 const errorElement = document.getElementById('error');
 const lastRefreshElement = document.getElementById('lastRefresh');
 const logoutBtn = document.getElementById('logoutBtn');
+
+const MOCK_DEVICES = [
+    { deviceId: "Living Room Lamp", ledOn: true, timestampUtc: new Date(Date.now() - 135000).toISOString() },
+    { deviceId: "Kitchen Fan", ledOn: false, timestampUtc: new Date(Date.now() - 435000).toISOString() },
+    { deviceId: "Bedroom Heater", ledOn: true, timestampUtc: new Date(Date.now() - 1035000).toISOString() }
+];
 
 logoutBtn.addEventListener('click', async () => {
     try {
@@ -57,9 +63,9 @@ function fmtTimestamp(ts) {
 function render(devices) {
     const now = Date.now();
 
-    rowsElement.innerHTML = devices.map(d => {
+    gridElement.innerHTML = devices.map(d => {
         const ts = d.timestampUtc ?? d.timestampUTC ?? d.timestamp ?? null;
-        const t= ts ? Date.parse(ts) : NaN;
+        const t = ts ? Date.parse(ts) : NaN;
         const ageSeconds = Number.isFinite(t) ? Math.floor((now - t) / 1000) : NaN;
 
         const isOn = !!d.ledOn;
@@ -67,12 +73,19 @@ function render(devices) {
         const badgeClass = isOn ? "on" : "off";
 
         return `
-            <tr>
-                <td>${escapeHtml(d.deviceId)}</td>
-                <td><span class="badge ${badgeClass}">${stateText}</span></td>
-                <td>${escapeHtml(fmtTimestamp(ts))}</td>
-                <td>${fmtAge(ageSeconds)}</td>
-            </tr>
+            <div class="device-card">
+                <div class="device-image">
+                    <div class="placeholder-img"></div>
+                </div>
+                <div class="device-info">
+                    <div class="device-name">${escapeHtml(d.deviceId)}</div>
+                    <div class="device-state">
+                        <span class="badge ${badgeClass}">${stateText}</span>
+                    </div>
+                    <div class="device-timestamp">${escapeHtml(fmtTimestamp(ts))}</div>
+                    <div class="device-age">${fmtAge(ageSeconds)}</div>
+                </div>
+            </div>
         `;
     }).join("");
 }
@@ -90,11 +103,20 @@ async function refresh() {
         }
 
         const devices = await res.json();
-        render(devices);
+        
+        if (devices.length === 0) {
+            render(MOCK_DEVICES);
+            errorElement.textContent = "No live data available. Showing placeholders.";
+        } else {
+            render(devices);
+        }
 
         lastRefreshElement.textContent = `Last refresh: ${fmtTimestamp(new Date().toISOString())}`;
     } catch (e) {
-        errorElement.textContent = `Failed to load: ${e.message}`;
+        console.warn('API fetch failed, using mock data', e);
+        errorElement.textContent = `Offline: ${e.message}. Showing placeholders.`;
+        render(MOCK_DEVICES);
+        lastRefreshElement.textContent = `Last refresh: ${fmtTimestamp(new Date().toISOString())} (Mock)`;
     }
 }
 

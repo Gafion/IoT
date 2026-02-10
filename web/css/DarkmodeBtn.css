@@ -1,0 +1,30 @@
+/* Theme toggle button shared styles */
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+    background-color: var(--bg-color);
+    border-color: var(--text-muted);
+}
+
+.theme-toggle .theme-icon {
+    transition: filter 0.3s ease;
+}
+
+[data-theme="dark"] .theme-toggle .theme-icon {
+    filter: grayscale(1) brightness(0.7);
+    opacity: 0.8;
+}

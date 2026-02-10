@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IoT Dashboard</title>
+    <link rel="stylesheet" href="../css/Variables.css" />
+    <link rel="stylesheet" href="../css/DarkmodeBtn.css" />
     <link rel="stylesheet" href="../css/Dashboard.css" />
 </head>
 <body>
@@ -27,18 +29,49 @@
                 </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Device</th>
-                            <th>State</th>
-                            <th>Timestamp (UTC)</th>
-                            <th>Age</th>
-                        </tr>
-                    </thead>
-                    <tbody id="deviceRows"></tbody>
-                </table>
+            <div id="deviceGrid" class="device-grid">
+                <!-- Showcase Placeholder Card 1 -->
+                <div class="device-card">
+                    <div class="device-image">
+                        <div class="placeholder-img"></div>
+                    </div>
+                    <div class="device-info">
+                        <div class="device-name">Living Room Lamp</div>
+                        <div class="device-state">
+                            <span class="badge on">ON</span>
+                        </div>
+                        <div class="device-timestamp">09:00:00 10/02/2026</div>
+                        <div class="device-age">2m 15s</div>
+                    </div>
+                </div>
+                <!-- Showcase Placeholder Card 2 -->
+                <div class="device-card">
+                    <div class="device-image">
+                        <div class="placeholder-img"></div>
+                    </div>
+                    <div class="device-info">
+                        <div class="device-name">Kitchen Fan</div>
+                        <div class="device-state">
+                            <span class="badge off">OFF</span>
+                        </div>
+                        <div class="device-timestamp">08:55:00 10/02/2026</div>
+                        <div class="device-age">7m 15s</div>
+                    </div>
+                </div>
+                <!-- Showcase Placeholder Card 3 -->
+                <div class="device-card">
+                    <div class="device-image">
+                        <div class="placeholder-img"></div>
+                    </div>
+                    <div class="device-info">
+                        <div class="device-name">Bedroom Heater</div>
+                        <div class="device-state">
+                            <span class="badge on">ON</span>
+                        </div>
+                        <div class="device-timestamp">08:45:00 10/02/2026</div>
+                        <div class="device-age">17m 15s</div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
